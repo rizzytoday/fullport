@@ -179,6 +179,8 @@ npm create solana-dapp@latest
 | AI Toolkit | https://docs.solanamobile.com/developers/ai-toolkit |
 | Test on Any Android | https://docs.solanamobile.com/react-native/test-with-any-android-device |
 
+> **Pro Tip**: Add `.md` to any solana.com URL to get raw markdown (e.g., `solana.com/docs/core.md`)
+
 ### Publishing
 | Resource | URL |
 |----------|-----|
