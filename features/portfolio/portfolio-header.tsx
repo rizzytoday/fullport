@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { usePortfolioStore } from '@/stores/portfolio-store'
+import { useSkrStore } from '@/stores/skr-store'
 import { colors, spacing, typography, borderRadius } from '@/constants/app-styles'
 import { formatRelativeTime, isDataStale } from '@/hooks/use-network-status'
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated'
@@ -12,8 +13,19 @@ function formatCurrency(value: number): string {
   return `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
+function formatCompact(value: number): string {
+  if (value >= 1_000_000) {
+    return `$${(value / 1_000_000).toFixed(2)}M`
+  }
+  if (value >= 1_000) {
+    return `$${(value / 1_000).toFixed(1)}K`
+  }
+  return `$${value.toFixed(0)}`
+}
+
 export function PortfolioHeader() {
   const { totalValueUsd, change24h, walletCount, lastUpdated } = usePortfolioStore()
+  const { staking, currentApy, priceUsd } = useSkrStore()
 
   const isPositive = (change24h ?? 0) >= 0
   const changeText = change24h !== null
@@ -22,6 +34,12 @@ export function PortfolioHeader() {
 
   const isStale = isDataStale(lastUpdated, 5) // Stale after 5 minutes
   const lastUpdatedText = formatRelativeTime(lastUpdated)
+
+  // Calculate projected value (12 month projection from staking rewards)
+  const stakedValue = staking ? staking.stakedUiAmount * (priceUsd ?? 0) : 0
+  const projectedStakingRewards = stakedValue * currentApy // 12 month rewards
+  const projectedValue = totalValueUsd + projectedStakingRewards
+  const hasProjection = projectedStakingRewards > 0
 
   return (
     <Animated.View entering={FadeIn.duration(300)} style={styles.container}>
@@ -68,6 +86,17 @@ export function PortfolioHeader() {
         </Text>
         <Text style={styles.period}>24h</Text>
       </Animated.View>
+
+      {/* Projected value line */}
+      {hasProjection && (
+        <Animated.View
+          entering={FadeInDown.delay(150).duration(400)}
+          style={styles.projectedRow}
+        >
+          <Text style={styles.projectedLabel}>Projected (incl. staking)</Text>
+          <Text style={styles.projectedValue}>{formatCompact(projectedValue)}</Text>
+        </Animated.View>
+      )}
     </Animated.View>
   )
 }
@@ -139,5 +168,25 @@ const styles = StyleSheet.create({
   period: {
     ...typography.bodySmall,
     color: colors.textMuted,
+  },
+  projectedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: spacing.md,
+    paddingTop: spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: colors.glassBorder,
+  },
+  projectedLabel: {
+    ...typography.labelSmall,
+    color: colors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.3,
+  },
+  projectedValue: {
+    ...typography.body,
+    fontWeight: '600',
+    color: colors.accentGreen,
   },
 })

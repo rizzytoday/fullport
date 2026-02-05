@@ -4,7 +4,6 @@ import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import { appStyles, colors, spacing } from '@/constants/app-styles'
 import { PortfolioHeader } from '@/features/portfolio/portfolio-header'
 import { AllocationChart } from '@/features/portfolio/allocation-chart'
-import { MissionProgress } from '@/features/portfolio/mission-progress'
 import { HoldingsList } from '@/features/portfolio/holdings-list'
 import { ConnectWalletCard } from '@/features/portfolio/connect-wallet-card'
 import { usePortfolioData } from '@/features/portfolio/use-portfolio-data'
@@ -43,10 +42,7 @@ export default function PortfolioScreen() {
       >
         {account ? (
           <View style={{ gap: spacing.xl }}>
-            <View>
-              <PortfolioHeader />
-              <MissionProgress />
-            </View>
+            <PortfolioHeader />
             <AllocationChart />
             <HoldingsList showEmptyState onRetry={onRefresh} />
           </View>
