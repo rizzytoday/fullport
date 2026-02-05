@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { Image } from 'expo-image'
 import { Ionicons } from '@expo/vector-icons'
+import { router } from 'expo-router'
 import { usePortfolioStore, TokenHolding } from '@/stores/portfolio-store'
 import { usePriceAlertsStore } from '@/stores/price-alerts-store'
 import { colors, spacing } from '@/constants/app-styles'
@@ -10,7 +11,12 @@ import { EmptyState } from '@/components/empty-state'
 import { ErrorState } from '@/components/error-state'
 import { AddTokenModal } from './add-token-modal'
 import { PriceAlertModal } from './price-alert-modal'
-import Animated, { FadeInDown } from 'react-native-reanimated'
+import Animated, {
+  FadeInDown,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated'
 import * as Haptics from 'expo-haptics'
 import { Platform } from 'react-native'
 
@@ -47,9 +53,23 @@ interface HoldingItemProps {
 
 function HoldingItem({ holding, index, onAlertPress, hasAlert }: HoldingItemProps) {
   const isPositive = (holding.change24h ?? 0) >= 0
+  const scale = useSharedValue(1)
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }))
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.97, { damping: 15, stiffness: 400 })
+  }
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1, { damping: 15, stiffness: 400 })
+  }
 
   const handlePress = () => {
     if (!isWeb) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    router.push(`/token/${holding.mint}`)
   }
 
   const handleAlertPress = () => {
@@ -58,10 +78,12 @@ function HoldingItem({ holding, index, onAlertPress, hasAlert }: HoldingItemProp
   }
 
   return (
-    <Animated.View entering={FadeInDown.delay(index * 40).duration(400)}>
+    <Animated.View entering={FadeInDown.delay(index * 40).duration(400)} style={animatedStyle}>
       <Pressable
         style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
         onPress={handlePress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
         onLongPress={handleAlertPress}
       >
         {/* Logo */}
