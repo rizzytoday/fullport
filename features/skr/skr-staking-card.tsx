@@ -1,27 +1,38 @@
+import { useState } from 'react'
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { appStyles, colors, spacing, borderRadius, typography, shadows } from '@/constants/app-styles'
 import { Ionicons } from '@expo/vector-icons'
 import Animated, { FadeIn, FadeInRight } from 'react-native-reanimated'
 import * as Haptics from 'expo-haptics'
+import { StakingModal } from './staking-modal'
+import { GuardianSelectModal } from './guardian-select-modal'
+import { useSkrStore } from '@/stores/skr-store'
 
-// TODO: Replace with real Guardian data
-const MOCK_GUARDIANS = [
-  { name: 'Helius', stake: '2.5M', apy: '8.2%', selected: true },
-  { name: 'Jito', stake: '3.1M', apy: '7.8%', selected: false },
-  { name: 'Marinade', stake: '1.8M', apy: '7.5%', selected: false },
+// Guardian display data (matches GUARDIANS in app-config)
+const DISPLAY_GUARDIANS = [
+  { name: 'Solana Mobile', stake: '45.2M', apy: '21.1%', address: 'SKRGdBwzb1AtFW2chhBnZpGFnFLj6Mi7HM7iwjXALvw' },
+  { name: 'Helius', stake: '32.1M', apy: '21.1%', address: 'HeL1Us1234567890123456789012345678901234567' },
+  { name: 'Jito', stake: '28.7M', apy: '21.1%', address: 'JiTo1234567890123456789012345678901234567890' },
 ]
 
 interface Guardian {
   name: string
   stake: string
   apy: string
-  selected: boolean
+  address: string
 }
 
-function GuardianRow({ guardian, index }: { guardian: Guardian; index: number }) {
+interface GuardianRowProps {
+  guardian: Guardian
+  index: number
+  isSelected: boolean
+  onPress: () => void
+}
+
+function GuardianRow({ guardian, index, isSelected, onPress }: GuardianRowProps) {
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    // TODO: Handle guardian selection
+    onPress()
   }
 
   return (
@@ -29,7 +40,7 @@ function GuardianRow({ guardian, index }: { guardian: Guardian; index: number })
       <Pressable
         style={({ pressed }) => [
           styles.guardianRow,
-          guardian.selected && styles.guardianRowSelected,
+          isSelected && styles.guardianRowSelected,
           pressed && { opacity: 0.8 },
         ]}
         onPress={handlePress}
@@ -39,7 +50,7 @@ function GuardianRow({ guardian, index }: { guardian: Guardian; index: number })
             <Ionicons
               name="shield-checkmark"
               size={18}
-              color={guardian.selected ? colors.accentPurple : colors.textMuted}
+              color={isSelected ? colors.accentPurple : colors.textMuted}
             />
           </View>
           <View>
@@ -49,11 +60,11 @@ function GuardianRow({ guardian, index }: { guardian: Guardian; index: number })
         </View>
         <View style={styles.guardianApy}>
           <Text style={styles.apyLabel}>APY</Text>
-          <Text style={[styles.apyValue, guardian.selected && { color: colors.accentGreen }]}>
+          <Text style={[styles.apyValue, isSelected && { color: colors.accentGreen }]}>
             {guardian.apy}
           </Text>
         </View>
-        {guardian.selected && (
+        {isSelected && (
           <View style={styles.selectedBadge}>
             <Ionicons name="checkmark-circle" size={20} color={colors.accentPurple} />
           </View>
@@ -64,9 +75,20 @@ function GuardianRow({ guardian, index }: { guardian: Guardian; index: number })
 }
 
 export function SkrStakingCard() {
+  const { staking } = useSkrStore()
+  const [stakingModalVisible, setStakingModalVisible] = useState(false)
+  const [guardianModalVisible, setGuardianModalVisible] = useState(false)
+
+  // Get current guardian address (default to first one)
+  const currentGuardianAddress = staking?.guardian ?? DISPLAY_GUARDIANS[0].address
+
   const handleStake = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-    // TODO: Open staking modal
+    setStakingModalVisible(true)
+  }
+
+  const handleGuardianPress = () => {
+    setGuardianModalVisible(true)
   }
 
   return (
@@ -79,8 +101,14 @@ export function SkrStakingCard() {
       </View>
 
       <View style={styles.guardianList}>
-        {MOCK_GUARDIANS.map((guardian, index) => (
-          <GuardianRow key={guardian.name} guardian={guardian} index={index} />
+        {DISPLAY_GUARDIANS.map((guardian, index) => (
+          <GuardianRow
+            key={guardian.name}
+            guardian={guardian}
+            index={index}
+            isSelected={guardian.address === currentGuardianAddress}
+            onPress={handleGuardianPress}
+          />
         ))}
       </View>
 
@@ -94,6 +122,19 @@ export function SkrStakingCard() {
         <Ionicons name="add-circle" size={20} color={colors.bgPrimary} />
         <Text style={styles.stakeButtonText}>Stake More SKR</Text>
       </Pressable>
+
+      {/* Staking Modal */}
+      <StakingModal
+        visible={stakingModalVisible}
+        mode="stake"
+        onClose={() => setStakingModalVisible(false)}
+      />
+
+      {/* Guardian Selection Modal */}
+      <GuardianSelectModal
+        visible={guardianModalVisible}
+        onClose={() => setGuardianModalVisible(false)}
+      />
     </Animated.View>
   )
 }
