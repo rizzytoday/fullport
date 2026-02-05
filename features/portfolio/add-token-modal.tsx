@@ -302,7 +302,7 @@ export function AddTokenModal({ visible, onClose }: AddTokenModalProps) {
 
         {/* Modal Content */}
         <Animated.View
-          entering={SlideInDown.springify().damping(18)}
+          entering={SlideInDown.duration(300).damping(25).stiffness(200)}
           exiting={SlideOutDown.duration(200)}
           style={styles.modalContent}
         >

@@ -116,8 +116,8 @@ export function GuardianSelectModal({ visible, onClose, onSelect }: GuardianSele
         </Pressable>
 
         <Animated.View
-          entering={SlideInDown.springify().damping(20)}
-          exiting={SlideOutDown.springify().damping(20)}
+          entering={SlideInDown.duration(300).damping(25).stiffness(200)}
+          exiting={SlideOutDown.duration(200)}
           style={styles.container}
         >
           {/* Handle */}
