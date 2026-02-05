@@ -41,6 +41,30 @@ export function PortfolioHeader() {
   const projectedValue = totalValueUsd + projectedStakingRewards
   const hasProjection = projectedStakingRewards > 0
 
+  // Calculate staking progress
+  const calculateProgress = () => {
+    if (!staking || projectedStakingRewards <= 0) return 0
+
+    // Time-based progress (if we have staking start date)
+    let timeProgress = 0
+    if (staking.stakingStartedAt) {
+      const monthsElapsed = (Date.now() - staking.stakingStartedAt) / (1000 * 60 * 60 * 24 * 30)
+      timeProgress = Math.min(monthsElapsed / 12, 1) // 12-month vesting period
+    }
+
+    // Rewards-based progress (pending rewards vs projected annual)
+    let rewardsProgress = 0
+    if (staking.pendingRewards > 0 && projectedStakingRewards > 0) {
+      const pendingRewardsValue = staking.pendingRewards * (priceUsd ?? 0)
+      rewardsProgress = Math.min(pendingRewardsValue / projectedStakingRewards, 1)
+    }
+
+    // Use whichever is higher (time-based is primary, rewards confirms)
+    return Math.max(timeProgress, rewardsProgress)
+  }
+
+  const stakingProgress = calculateProgress()
+
   return (
     <Animated.View entering={FadeIn.duration(300)} style={styles.container}>
       <View style={styles.labelRow}>
@@ -87,14 +111,35 @@ export function PortfolioHeader() {
         <Text style={styles.period}>24h</Text>
       </Animated.View>
 
-      {/* Projected value line */}
+      {/* Projected with progress bar */}
       {hasProjection && (
         <Animated.View
           entering={FadeInDown.delay(150).duration(400)}
-          style={styles.projectedRow}
+          style={styles.projectedSection}
         >
-          <Text style={styles.projectedLabel}>Projected (incl. staking)</Text>
-          <Text style={styles.projectedValue}>{formatCompact(projectedValue)}</Text>
+          {/* Progress header */}
+          <View style={styles.progressHeader}>
+            <Text style={styles.progressTitle}>Progress</Text>
+            <Text style={styles.progressPercent}>
+              {(stakingProgress * 100).toFixed(1)}%
+            </Text>
+          </View>
+
+          {/* Progress bar */}
+          <View style={styles.progressTrack}>
+            <View
+              style={[
+                styles.progressFill,
+                { width: `${stakingProgress * 100}%` }
+              ]}
+            />
+          </View>
+
+          {/* Projected label below */}
+          <View style={styles.projectedRow}>
+            <Text style={styles.projectedLabel}>Projected (incl. staking)</Text>
+            <Text style={styles.projectedValue}>{formatCompact(projectedValue)}</Text>
+          </View>
         </Animated.View>
       )}
     </Animated.View>
@@ -169,24 +214,54 @@ const styles = StyleSheet.create({
     ...typography.bodySmall,
     color: colors.textMuted,
   },
-  projectedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  projectedSection: {
     marginTop: spacing.md,
     paddingTop: spacing.sm,
     borderTopWidth: 1,
     borderTopColor: colors.glassBorder,
+    gap: spacing.sm,
   },
-  projectedLabel: {
-    ...typography.labelSmall,
+  progressHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  progressTitle: {
+    fontSize: 11,
+    fontWeight: '500',
     color: colors.textMuted,
-    textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
-  projectedValue: {
-    ...typography.body,
+  progressPercent: {
+    fontSize: 11,
     fontWeight: '600',
-    color: colors.accentGreen,
+    color: colors.accentPurple,
+  },
+  progressTrack: {
+    height: 4,
+    backgroundColor: 'rgba(168, 85, 247, 0.15)',
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: colors.accentPurple,
+    borderRadius: 2,
+  },
+  projectedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  projectedLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: colors.textMuted,
+    letterSpacing: 0.2,
+  },
+  projectedValue: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.accentPurple,
   },
 })

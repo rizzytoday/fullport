@@ -92,31 +92,16 @@ function HoldingItem({ holding, index, onAlertPress, hasAlert }: HoldingItemProp
           )}
         </View>
 
-        {/* Value + Alert */}
+        {/* Value */}
         <View style={styles.valueSection}>
-          <View style={styles.valueRow}>
-            <Text style={styles.value}>{formatValue(holding.valueUsd)}</Text>
-            <Pressable
-              style={({ pressed }) => [styles.alertButton, pressed && styles.alertButtonPressed]}
-              onPress={handleAlertPress}
-              hitSlop={8}
+          <Text style={styles.value}>{formatValue(holding.valueUsd)}</Text>
+          {holding.change24h !== null && (
+            <Text
+              style={[styles.change, { color: isPositive ? colors.accentGreen : colors.accentRed }]}
             >
-              <Ionicons
-                name={hasAlert ? 'notifications' : 'notifications-outline'}
-                size={16}
-                color={hasAlert ? colors.accentGold : colors.textMuted}
-              />
-            </Pressable>
-          </View>
-          <View style={styles.changeRow}>
-            {holding.change24h !== null && (
-              <Text
-                style={[styles.change, { color: isPositive ? colors.accentGreen : colors.accentRed }]}
-              >
-                {isPositive ? '+' : ''}{holding.change24h.toFixed(1)}%
-              </Text>
-            )}
-          </View>
+              {isPositive ? '+' : ''}{holding.change24h.toFixed(1)}%
+            </Text>
+          )}
         </View>
       </Pressable>
     </Animated.View>
@@ -325,26 +310,11 @@ const styles = StyleSheet.create({
     minWidth: 80,
     gap: 2,
   },
-  valueRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
   value: {
     fontSize: 16,
     fontWeight: '600',
     color: colors.textPrimary,
     letterSpacing: -0.3,
-  },
-  alertButton: {
-    padding: 4,
-  },
-  alertButtonPressed: {
-    opacity: 0.5,
-  },
-  changeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   change: {
     fontSize: 13,

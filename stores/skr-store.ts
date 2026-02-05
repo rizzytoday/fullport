@@ -11,6 +11,7 @@ export interface StakingInfo {
   lastCompound: number | null
   cooldownEnd: number | null // Timestamp when unstaking cooldown ends
   isUnstaking: boolean
+  stakingStartedAt: number | null // Timestamp when staking began
 }
 
 export interface SKRState {
