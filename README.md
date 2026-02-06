@@ -2,11 +2,13 @@
 
 **Mobile-first Solana portfolio tracker with native SKR staking for Seeker.**
 
-Built for [Monolith 2026](https://monolith.solanamobile.com/) hackathon.
+Built for [Monolith 2026](https://solanamobile.com/hackathon) hackathon.
 
-![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20Android-blue)
+![Platform](https://img.shields.io/badge/platform-Android-green)
 ![Framework](https://img.shields.io/badge/framework-Expo%20SDK%2054-black)
 ![License](https://img.shields.io/badge/license-MIT-green)
+
+Fullport is a dedicated portfolio app for Solana Seeker owners. Track all your tokens in one place, stake SKR with a single tap, set price alerts, and secure your portfolio with biometric lock. Designed for the mobile-first Solana user who wants a fast, beautiful, native experience.
 
 ---
 
@@ -224,6 +226,17 @@ export const DEMO_MODE = true // Set to false for live data
 
 ## Roadmap
 
+### Completed
+- [x] Real-time portfolio tracking with Helius DAS
+- [x] SKR staking with guardian selection
+- [x] Projected rewards visualization
+- [x] Price alerts with notifications
+- [x] Biometric lock (Face ID / Fingerprint)
+- [x] Multi-wallet aggregation
+- [x] Token detail with interactive charts
+- [x] Sparkline price charts
+
+### Coming Soon
 - [ ] Transaction history from on-chain data
 - [ ] Multiple guardian support (Anza, Jito, etc.)
 - [ ] Push notifications for staking rewards
