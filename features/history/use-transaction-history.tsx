@@ -289,8 +289,8 @@ export async function detectNewAirdrops(
 export function useTransactionHistory(address: string | undefined) {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['transactions', address],
-    queryFn: () => (address ? fetchTransactionHistory(address) : Promise.resolve([])),
-    enabled: !!address,
+    queryFn: () => fetchTransactionHistory(address || 'demo'),
+    enabled: !!address || DEMO_MODE,
     staleTime: 30000, // 30 seconds
     gcTime: 300000, // 5 minutes (renamed from cacheTime in v5)
   })

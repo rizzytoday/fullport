@@ -5,6 +5,7 @@ import { appStyles, colors, spacing } from '@/constants/app-styles'
 import { ConnectWalletCard } from '@/features/portfolio/connect-wallet-card'
 import { TransactionItem, Transaction } from '@/features/history/transaction-item'
 import { useTransactionHistory } from '@/features/history/use-transaction-history'
+import { DEMO_MODE } from '@/constants/mock-data'
 import { useCallback, useState } from 'react'
 import * as Haptics from 'expo-haptics'
 import Animated, { FadeIn } from 'react-native-reanimated'
@@ -45,7 +46,7 @@ export default function HistoryScreen() {
 
   return (
     <SafeAreaView style={[appStyles.screen, isWeb && { paddingTop: 40 }]} edges={['top']}>
-      {account ? (
+      {(account || DEMO_MODE) ? (
         <FlatList
           data={transactions}
           keyExtractor={(item) => item.signature}

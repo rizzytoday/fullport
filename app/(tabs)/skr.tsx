@@ -9,6 +9,7 @@ import { ApyCalculator } from '@/features/skr/apy-calculator'
 import { StakingModal } from '@/features/skr/staking-modal'
 import { GuardianSelectModal } from '@/features/skr/guardian-select-modal'
 import { useSkrData } from '@/features/skr/use-skr-data'
+import { DEMO_MODE } from '@/constants/mock-data'
 import { useCallback, useState } from 'react'
 import * as Haptics from 'expo-haptics'
 
@@ -69,7 +70,7 @@ export default function SkrScreen() {
           />
         }
       >
-        {account ? (
+        {(account || DEMO_MODE) ? (
           <View style={{ gap: spacing.xl, paddingTop: spacing.lg }}>
             <SkrBalanceCard />
             <StakingCard
