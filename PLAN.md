@@ -72,18 +72,17 @@
 - **SKR calculator**: project future earnings
 - **Delegation UI**: quick-delegate to Guardians
 
-### 4. Transaction History
+### 4. Transaction History ✅
 - All transactions with labels
 - Token swaps, transfers, staking events
 - Filter by type, date, token
 
 ### 5. Push Notifications
-- Price alerts (SOL below/above X)
-- Whale alerts (large movements in portfolio tokens)
-- Staking reward notifications
-- New airdrop detection
+- Price alerts (SOL below/above X) ✅
+- Staking reward notifications ✅
+- New airdrop detection ✅
 
-### 6. AI Insights (X-Factor)
+### 6. AI Insights (X-Factor) ✅
 - "Your portfolio is up 12% this week, outperforming SOL by 3%"
 - "You have unclaimed staking rewards worth $X"
 - "Consider diversifying - 80% in single token"
@@ -279,7 +278,7 @@ Following CLAUDE.md design philosophy:
 ## Submission Requirements Checklist
 
 - [ ] **Functional APK**: Release build for Android
-- [ ] **GitHub Repo**: Public repository with source code
+- [ ] **GitHub Repo**: Public repository with source code (currently private - make public before submission)
 - [ ] **Demo Video**: 3-5 min showcasing functionality
 - [ ] **Pitch Deck**: Problem, solution, features, team
 
@@ -360,7 +359,7 @@ Screenshots from Chaseeb's (Seeker founder) portfolio app attempt. This is what 
 2. ✅ % allocation per token (purple badges on each holding)
 3. ✅ Simple pie chart for allocation (donut chart with legend)
 4. ✅ Goal/target feature (gamification - Mission Progress with segmented bar)
-5. 🔲 SKR staking integration
+5. ✅ SKR staking integration (full stake/unstake, guardian selection, rewards projection)
 
 ---
 

@@ -5,6 +5,7 @@ import { appStyles, colors, spacing } from '@/constants/app-styles'
 import { PortfolioHeader } from '@/features/portfolio/portfolio-header'
 import { AllocationChart } from '@/features/portfolio/allocation-chart'
 import { HoldingsList } from '@/features/portfolio/holdings-list'
+import { AIInsights } from '@/features/portfolio/ai-insights'
 import { ConnectWalletCard } from '@/features/portfolio/connect-wallet-card'
 import { usePortfolioData } from '@/features/portfolio/use-portfolio-data'
 import { Toast } from '@/components/toast'
@@ -52,6 +53,7 @@ export default function PortfolioScreen() {
         {account ? (
           <View style={{ gap: spacing.xl }}>
             <PortfolioHeader />
+            <AIInsights />
             <AllocationChart />
             <HoldingsList showEmptyState onRetry={onRefresh} onAlertCreated={handleAlertCreated} />
           </View>
