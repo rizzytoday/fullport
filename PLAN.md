@@ -277,8 +277,8 @@ Following CLAUDE.md design philosophy:
 
 ## Submission Requirements Checklist
 
-- [ ] **Functional APK**: Release build for Android
-- [ ] **GitHub Repo**: Public repository with source code (currently private - make public before submission)
+- [x] **Functional APK**: Release build for Android
+- [x] **GitHub Repo**: Public repository with source code — https://github.com/rizzytoday/fullport
 - [ ] **Demo Video**: 3-5 min showcasing functionality
 - [ ] **Pitch Deck**: Problem, solution, features, team
 
