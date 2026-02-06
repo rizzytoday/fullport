@@ -309,7 +309,11 @@ export function AddTokenModal({ visible, onClose }: AddTokenModalProps) {
           <View style={styles.handle} />
 
           {/* Close button */}
-          <Pressable style={styles.closeButton} onPress={handleClose}>
+          <Pressable
+            style={styles.closeButton}
+            onPress={handleClose}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
             <Ionicons name="close" size={24} color={colors.textMuted} />
           </Pressable>
 
@@ -351,10 +355,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: spacing.md,
     right: spacing.md,
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 10,
+    backgroundColor: colors.glassBg,
+    borderRadius: 22,
   },
   stepContent: {
     gap: spacing.lg,

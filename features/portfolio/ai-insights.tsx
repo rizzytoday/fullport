@@ -135,22 +135,7 @@ function generateInsights(
     }
   }
 
-  // 6. Staking earnings rate
-  if (stakingInfo && stakingInfo.stakedAmount > 0 && skrPrice) {
-    const stakedUi = stakingInfo.stakedAmount / Math.pow(10, SKR_CONFIG.decimals)
-    const monthlyRewards = (stakedUi * SKR_CONFIG.currentApy) / 12
-    const monthlyUsd = monthlyRewards * skrPrice
-    if (monthlyUsd >= 1) {
-      insights.push({
-        id: 'staking-earnings',
-        type: 'staking',
-        text: `Earning ~${formatUsd(monthlyUsd)}/month from staked SKR`,
-        priority: 5,
-      })
-    }
-  }
-
-  // 7. Unstaked SKR opportunity
+  // 6. Unstaked SKR opportunity
   const skrHolding = holdings.find(h => h.mint === SKR_CONFIG.mint)
   if (skrHolding && skrHolding.uiAmount > 1000 && (!stakingInfo || stakingInfo.stakedAmount === 0)) {
     const potential = skrHolding.uiAmount * SKR_CONFIG.currentApy
@@ -163,7 +148,7 @@ function generateInsights(
     })
   }
 
-  // 8. Price milestones
+  // 7. Price milestones
   if (solHolding && solHolding.priceUsd) {
     const price = solHolding.priceUsd
     if (price >= 95 && price <= 105) {
@@ -176,7 +161,7 @@ function generateInsights(
     }
   }
 
-  // 9. Large portfolio milestone
+  // 8. Large portfolio milestone
   if (totalValue >= 100000) {
     const milestone = totalValue >= 500000 ? '500K' : totalValue >= 250000 ? '250K' : '100K'
     insights.push({
@@ -187,7 +172,7 @@ function generateInsights(
     })
   }
 
-  // 10. Token count
+  // 9. Token count
   if (holdings.length >= 6) {
     insights.push({
       id: 'token-count',

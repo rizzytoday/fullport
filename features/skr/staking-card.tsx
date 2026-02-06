@@ -1,8 +1,10 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useSkrStore } from '@/stores/skr-store'
+import { useStakingRewardsStore } from '@/stores/staking-rewards-store'
 import { SKR_CONFIG, GUARDIANS } from '@/constants/app-config'
 import { colors, spacing } from '@/constants/app-styles'
+import { CooldownTimer } from '@/features/skr/cooldown-timer'
 import Animated, { FadeIn } from 'react-native-reanimated'
 import * as Haptics from 'expo-haptics'
 import { Platform } from 'react-native'
@@ -16,7 +18,8 @@ interface StakingCardProps {
 }
 
 export function StakingCard({ onStake, onUnstake, onChangeGuardian }: StakingCardProps) {
-  const { uiBalance, staking, currentApy } = useSkrStore()
+  const { uiBalance, staking, currentApy, priceUsd } = useSkrStore()
+  const { totalEarned, totalEarnedUsd } = useStakingRewardsStore()
 
   const handleStake = () => {
     if (!isWeb) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
@@ -31,11 +34,15 @@ export function StakingCard({ onStake, onUnstake, onChangeGuardian }: StakingCar
   const canStake = uiBalance > 0
   const canUnstake = staking && staking.stakedUiAmount > 0
 
-  // Calculate cooldown status
-  const cooldownRemaining = staking?.cooldownEnd
-    ? Math.max(0, staking.cooldownEnd - Date.now() / 1000)
-    : 0
-  const cooldownHours = Math.ceil(cooldownRemaining / 3600)
+  // Calculate cooldown end in milliseconds for CooldownTimer
+  const cooldownEndMs = staking?.cooldownEnd && staking.isUnstaking
+    ? staking.cooldownEnd * 1000
+    : null
+
+  // Get the actual guardian's commission (not always first guardian)
+  const selectedGuardian = staking?.guardianName
+    ? GUARDIANS.find(g => g.name === staking.guardianName) ?? GUARDIANS[0]
+    : GUARDIANS[0]
 
   return (
     <Animated.View entering={FadeIn.delay(100).duration(400)} style={styles.container}>
@@ -59,11 +66,11 @@ export function StakingCard({ onStake, onUnstake, onChangeGuardian }: StakingCar
         <View style={styles.guardianInfo}>
           <Text style={styles.guardianLabel}>Guardian</Text>
           <Text style={styles.guardianName}>
-            {staking?.guardianName ?? GUARDIANS[0].name}
+            {selectedGuardian.name}
           </Text>
         </View>
         <Text style={styles.guardianCommission}>
-          {GUARDIANS[0].commission}% fee
+          {selectedGuardian.commission}% fee
         </Text>
       </Pressable>
 
@@ -72,30 +79,33 @@ export function StakingCard({ onStake, onUnstake, onChangeGuardian }: StakingCar
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>Staked</Text>
           <Text style={styles.statValue}>
-            {staking?.stakedUiAmount?.toFixed(0) ?? '0'}
+            {staking?.stakedUiAmount ? `${(staking.stakedUiAmount / 1000).toFixed(0)}K` : '0'}
           </Text>
+          <Text style={styles.statUnit}>SKR</Text>
         </View>
         <View style={styles.statDivider} />
         <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Rewards</Text>
+          <Text style={styles.statLabel}>Pending</Text>
           <Text style={[styles.statValue, styles.rewardsText]}>
-            +{((staking?.pendingRewards ?? 0) / Math.pow(10, SKR_CONFIG.decimals)).toFixed(2)}
+            +{((staking?.pendingRewards ?? 0) / Math.pow(10, SKR_CONFIG.decimals)).toFixed(0)}
           </Text>
+          <Text style={[styles.statUnit, styles.rewardsText]}>SKR</Text>
         </View>
         <View style={styles.statDivider} />
         <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Interval</Text>
-          <Text style={styles.statValue}>48h</Text>
+          <Text style={styles.statLabel}>Earned</Text>
+          <Text style={[styles.statValue, styles.earnedText]}>
+            ${totalEarnedUsd >= 1000 ? `${(totalEarnedUsd / 1000).toFixed(1)}K` : totalEarnedUsd.toFixed(0)}
+          </Text>
+          <Text style={[styles.statUnit, styles.earnedText]}>
+            {totalEarned >= 1000 ? `${(totalEarned / 1000).toFixed(1)}K` : totalEarned.toFixed(0)} SKR
+          </Text>
         </View>
       </View>
 
-      {/* Cooldown Warning */}
-      {staking?.isUnstaking && cooldownRemaining > 0 && (
-        <View style={styles.cooldownBanner}>
-          <Text style={styles.cooldownText}>
-            Unstaking in progress - {cooldownHours}h remaining
-          </Text>
-        </View>
+      {/* Cooldown Timer */}
+      {staking?.isUnstaking && (
+        <CooldownTimer cooldownEnd={cooldownEndMs} />
       )}
 
       {/* Action Buttons */}
@@ -226,20 +236,17 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     letterSpacing: -0.3,
   },
+  statUnit: {
+    fontSize: 10,
+    fontWeight: '500',
+    color: colors.textMuted,
+    marginTop: -2,
+  },
   rewardsText: {
     color: colors.accentGreen,
   },
-  cooldownBanner: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    backgroundColor: 'rgba(245, 158, 11, 0.15)',
-    borderRadius: 8,
-  },
-  cooldownText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#f59e0b',
-    textAlign: 'center',
+  earnedText: {
+    color: colors.accentPurple,
   },
   actions: {
     flexDirection: 'row',

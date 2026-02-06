@@ -5,7 +5,7 @@ import { appStyles, colors, spacing } from '@/constants/app-styles'
 import { ConnectWalletCard } from '@/features/portfolio/connect-wallet-card'
 import { SkrBalanceCard } from '@/features/skr/skr-balance-card'
 import { StakingCard } from '@/features/skr/staking-card'
-import { ApyCalculator } from '@/features/skr/apy-calculator'
+import { ProjectedRewards } from '@/features/skr/projected-rewards'
 import { StakingModal } from '@/features/skr/staking-modal'
 import { GuardianSelectModal } from '@/features/skr/guardian-select-modal'
 import { useSkrData } from '@/features/skr/use-skr-data'
@@ -78,7 +78,7 @@ export default function SkrScreen() {
               onUnstake={handleUnstake}
               onChangeGuardian={handleChangeGuardian}
             />
-            <ApyCalculator />
+            <ProjectedRewards />
           </View>
         ) : (
           <View style={{ paddingTop: spacing.xl }}>
