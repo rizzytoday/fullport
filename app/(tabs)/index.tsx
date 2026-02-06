@@ -53,9 +53,9 @@ export default function PortfolioScreen() {
         {account ? (
           <View style={{ gap: spacing.xl }}>
             <PortfolioHeader />
-            <AIInsights />
             <AllocationChart />
             <HoldingsList showEmptyState onRetry={onRefresh} onAlertCreated={handleAlertCreated} />
+            <AIInsights />
           </View>
         ) : (
           <View style={{ paddingTop: spacing.xl }}>
