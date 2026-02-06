@@ -1,5 +1,17 @@
 {
   "name": "fullport",
+  "version": "1.0.0",
+  "description": "Mobile-first Solana portfolio tracker for Seeker with native SKR staking",
+  "author": "Fullport Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rizzytoday/fullport.git"
+  },
+  "homepage": "https://github.com/rizzytoday/fullport#readme",
+  "bugs": {
+    "url": "https://github.com/rizzytoday/fullport/issues"
+  },
   "scripts": {
     "android": "expo run:android",
     "android:build": "expo prebuild -p android",
@@ -16,8 +28,6 @@
     "web": "expo start --web"
   },
   "displayName": "Fullport",
-  "description": "Mobile-first Solana portfolio tracker for Seeker with SKR integration",
-  "usecase": "Mobile",
   "keywords": [
     "expo",
     "mobile-wallet-adapter",
@@ -28,7 +38,6 @@
     "skr"
   ],
   "main": "./index.js",
-  "version": "1.0.0",
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
     "@react-native-async-storage/async-storage": "^2.2.0",
