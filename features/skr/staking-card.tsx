@@ -39,6 +39,11 @@ export function StakingCard({ onStake, onUnstake, onChangeGuardian }: StakingCar
     ? staking.cooldownEnd * 1000
     : null
 
+  // Get the actual guardian's commission (not always first guardian)
+  const selectedGuardian = staking?.guardianName
+    ? GUARDIANS.find(g => g.name === staking.guardianName) ?? GUARDIANS[0]
+    : GUARDIANS[0]
+
   return (
     <Animated.View entering={FadeIn.delay(100).duration(400)} style={styles.container}>
       {/* Thin Separator */}
@@ -61,11 +66,11 @@ export function StakingCard({ onStake, onUnstake, onChangeGuardian }: StakingCar
         <View style={styles.guardianInfo}>
           <Text style={styles.guardianLabel}>Guardian</Text>
           <Text style={styles.guardianName}>
-            {staking?.guardianName ?? GUARDIANS[0].name}
+            {selectedGuardian.name}
           </Text>
         </View>
         <Text style={styles.guardianCommission}>
-          {GUARDIANS[0].commission}% fee
+          {selectedGuardian.commission}% fee
         </Text>
       </Pressable>
 

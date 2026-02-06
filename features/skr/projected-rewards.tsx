@@ -11,9 +11,9 @@ export function ProjectedRewards() {
 
   // Calculate projected earnings if all SKR is staked
   const totalStakeable = (staking?.stakedUiAmount ?? 0) + uiBalance
-  const dailyRewards = (totalStakeable * currentApy) / 365
-  const monthlyRewards = dailyRewards * 30
   const yearlyRewards = totalStakeable * currentApy
+  const monthlyRewards = yearlyRewards / 12  // APY / 12 for consistent monthly calc
+  const dailyRewards = yearlyRewards / 365
 
   const formatReward = (amount: number) => {
     if (amount >= 1000) return `${(amount / 1000).toFixed(1)}K`

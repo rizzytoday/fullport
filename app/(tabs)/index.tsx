@@ -7,6 +7,7 @@ import { PortfolioHistoryChart } from '@/features/portfolio/portfolio-history-ch
 import { AllocationChart } from '@/features/portfolio/allocation-chart'
 import { HoldingsList } from '@/features/portfolio/holdings-list'
 import { AIInsights } from '@/features/portfolio/ai-insights'
+import { IncomeSummaryMini } from '@/features/portfolio/income-summary-mini'
 import { ConnectWalletCard } from '@/features/portfolio/connect-wallet-card'
 import { usePortfolioData } from '@/features/portfolio/use-portfolio-data'
 import { useSkrData } from '@/features/skr/use-skr-data'
@@ -83,6 +84,7 @@ export default function PortfolioScreen() {
             <AllocationChart />
             <HoldingsList showEmptyState onRetry={onRefresh} onAlertCreated={handleAlertCreated} />
             <AIInsights />
+            <IncomeSummaryMini />
           </View>
         ) : (
           <View style={{ paddingTop: spacing.xl }}>
