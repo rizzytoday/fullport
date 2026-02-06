@@ -16,18 +16,23 @@ Fullport is a dedicated portfolio app for Solana Seeker owners. Track all your t
 
 ### Portfolio Management
 - **Real-time holdings** — View all tokens with live prices via Helius DAS API
+- **Portfolio history chart** — Track value over time (1D, 1W, 1M, 3M, 1Y, ALL)
 - **24h change tracking** — Color-coded gains/losses at a glance
-- **Allocation chart** — Visual breakdown of your portfolio
+- **Allocation chart** — Visual breakdown with Assets/Position toggle
+- **Position breakdown** — See Staked vs Liquid vs Stable vs Locked
 - **Sparkline charts** — Mini price graphs on every token
 - **Multi-wallet support** — Watch multiple wallets, view aggregated or separately
 - **Custom tokens** — Add any SPL token by mint address
+- **AI Insights** — Smart portfolio analysis and recommendations
 
 ### SKR Staking (Seeker-Native)
 - **One-tap staking** — Stake SKR directly in-app
 - **Guardian selection** — Choose your validator (Solana Mobile, more coming)
+- **Staking income tracker** — Track total earned, monthly, and daily average
+- **Cooldown timer** — Visual circular countdown for unstaking
 - **APY calculator** — See projected rewards at current rates
-- **Progress tracking** — Visual countdown for unstaking cooldown
-- **Rewards projection** — Chart showing earnings over 1M, 3M, 6M, 12M
+- **Rewards projection** — Milestone chart showing earnings over 1M, 3M, 6M, 12M
+- **Income summary** — At-a-glance passive income metrics
 
 ### Security & UX
 - **Biometric lock** — Face ID / Fingerprint with auto-lock on background
@@ -130,7 +135,9 @@ fullport/
 │   └── settings/           # Preferences, wallets
 ├── stores/                 # Zustand state stores
 │   ├── portfolio-store.ts
+│   ├── portfolio-history-store.ts
 │   ├── skr-store.ts
+│   ├── staking-rewards-store.ts
 │   ├── auth-store.ts
 │   └── ...
 ├── components/             # Shared UI components
@@ -228,8 +235,13 @@ export const DEMO_MODE = true // Set to false for live data
 
 ### Completed
 - [x] Real-time portfolio tracking with Helius DAS
+- [x] Portfolio history chart with time intervals
+- [x] Allocation view switcher (Assets/Position)
 - [x] SKR staking with guardian selection
-- [x] Projected rewards visualization
+- [x] Staking income tracker with history
+- [x] Cooldown timer with visual countdown
+- [x] Projected rewards milestone chart
+- [x] AI-powered portfolio insights
 - [x] Price alerts with notifications
 - [x] Biometric lock (Face ID / Fingerprint)
 - [x] Multi-wallet aggregation
@@ -242,6 +254,7 @@ export const DEMO_MODE = true // Set to false for live data
 - [ ] Push notifications for staking rewards
 - [ ] NFT gallery view
 - [ ] DeFi position tracking
+- [ ] Referral system with partner rewards
 
 ---
 
