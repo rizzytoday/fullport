@@ -25,16 +25,16 @@ export function ProjectedEarningsChart({
   width = 320,
   height = 140,
 }: ProjectedEarningsChartProps) {
-  // Calculate projected values for each milestone
+  // Calculate REWARDS earned at each milestone (not total portfolio value)
   const projections = MILESTONES.map(({ months }) => {
     const yearFraction = months / 12
-    const projectedSkr = totalStaked * (1 + currentApy * yearFraction)
-    const projectedUsd = priceUsd ? projectedSkr * priceUsd : null
-    return { months, skr: projectedSkr, usd: projectedUsd }
+    const rewardsSkr = totalStaked * currentApy * yearFraction
+    const rewardsUsd = priceUsd ? rewardsSkr * priceUsd : null
+    return { months, skr: rewardsSkr, usd: rewardsUsd }
   })
 
-  const startValue = totalStaked * (priceUsd ?? 0)
-  const values = [startValue, ...projections.map((p) => p.usd ?? 0)]
+  // Start from $0 (no rewards earned yet)
+  const values = [0, ...projections.map((p) => p.usd ?? 0)]
 
   // Chart dimensions
   const paddingLeft = 8
@@ -71,7 +71,8 @@ export function ProjectedEarningsChart({
 
   // Format USD value
   const formatUsd = (value: number | null) => {
-    if (value === null || value === 0) return '--'
+    if (value === null) return '--'
+    if (value === 0) return '$0'
     if (value >= 1000) return `$${(value / 1000).toFixed(1)}K`
     return `$${value.toFixed(0)}`
   }
@@ -134,7 +135,7 @@ export function ProjectedEarningsChart({
       <View style={[styles.labels, { width, paddingLeft, paddingRight }]}>
         <View style={styles.labelItem}>
           <Text style={styles.labelText}>Now</Text>
-          <Text style={styles.valueText}>{formatUsd(startValue)}</Text>
+          <Text style={styles.valueText}>$0</Text>
         </View>
         {MILESTONES.map((milestone, index) => (
           <View key={milestone.label} style={styles.labelItem}>
