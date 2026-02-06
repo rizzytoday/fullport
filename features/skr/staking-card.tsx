@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { useSkrStore } from '@/stores/skr-store'
 import { SKR_CONFIG, GUARDIANS } from '@/constants/app-config'
 import { colors, spacing } from '@/constants/app-styles'
+import { CooldownTimer } from '@/features/skr/cooldown-timer'
 import Animated, { FadeIn } from 'react-native-reanimated'
 import * as Haptics from 'expo-haptics'
 import { Platform } from 'react-native'
@@ -31,11 +32,10 @@ export function StakingCard({ onStake, onUnstake, onChangeGuardian }: StakingCar
   const canStake = uiBalance > 0
   const canUnstake = staking && staking.stakedUiAmount > 0
 
-  // Calculate cooldown status
-  const cooldownRemaining = staking?.cooldownEnd
-    ? Math.max(0, staking.cooldownEnd - Date.now() / 1000)
-    : 0
-  const cooldownHours = Math.ceil(cooldownRemaining / 3600)
+  // Calculate cooldown end in milliseconds for CooldownTimer
+  const cooldownEndMs = staking?.cooldownEnd && staking.isUnstaking
+    ? staking.cooldownEnd * 1000
+    : null
 
   return (
     <Animated.View entering={FadeIn.delay(100).duration(400)} style={styles.container}>
@@ -89,13 +89,9 @@ export function StakingCard({ onStake, onUnstake, onChangeGuardian }: StakingCar
         </View>
       </View>
 
-      {/* Cooldown Warning */}
-      {staking?.isUnstaking && cooldownRemaining > 0 && (
-        <View style={styles.cooldownBanner}>
-          <Text style={styles.cooldownText}>
-            Unstaking in progress - {cooldownHours}h remaining
-          </Text>
-        </View>
+      {/* Cooldown Timer */}
+      {staking?.isUnstaking && (
+        <CooldownTimer cooldownEnd={cooldownEndMs} />
       )}
 
       {/* Action Buttons */}
@@ -228,18 +224,6 @@ const styles = StyleSheet.create({
   },
   rewardsText: {
     color: colors.accentGreen,
-  },
-  cooldownBanner: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    backgroundColor: 'rgba(245, 158, 11, 0.15)',
-    borderRadius: 8,
-  },
-  cooldownText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#f59e0b',
-    textAlign: 'center',
   },
   actions: {
     flexDirection: 'row',

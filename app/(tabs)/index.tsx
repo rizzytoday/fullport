@@ -3,15 +3,18 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import { appStyles, colors, spacing } from '@/constants/app-styles'
 import { PortfolioHeader } from '@/features/portfolio/portfolio-header'
+import { PortfolioHistoryChart } from '@/features/portfolio/portfolio-history-chart'
 import { AllocationChart } from '@/features/portfolio/allocation-chart'
 import { HoldingsList } from '@/features/portfolio/holdings-list'
 import { AIInsights } from '@/features/portfolio/ai-insights'
 import { ConnectWalletCard } from '@/features/portfolio/connect-wallet-card'
 import { usePortfolioData } from '@/features/portfolio/use-portfolio-data'
 import { useSkrData } from '@/features/skr/use-skr-data'
+import { usePortfolioStore } from '@/stores/portfolio-store'
+import { usePortfolioHistoryStore } from '@/stores/portfolio-history-store'
 import { DEMO_MODE } from '@/constants/mock-data'
 import { Toast } from '@/components/toast'
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 import * as Haptics from 'expo-haptics'
 
 const isWeb = Platform.OS === 'web'
@@ -21,11 +24,30 @@ export default function PortfolioScreen() {
   const wallet = isWeb ? null : useMobileWallet()
   const account = wallet?.account
 
-  const { refetch } = usePortfolioData()
+  const { refetch, isLoading } = usePortfolioData()
   useSkrData() // Load SKR data for AI Insights
   const [refreshing, setRefreshing] = useState(false)
   const [toastVisible, setToastVisible] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
+
+  // Portfolio data for history snapshots
+  const { holdings, totalValueUsd } = usePortfolioStore()
+  const addSnapshot = usePortfolioHistoryStore((s) => s.addSnapshot)
+
+  // Record portfolio snapshot when data is loaded
+  useEffect(() => {
+    if (!isLoading && holdings.length > 0 && totalValueUsd > 0) {
+      addSnapshot({
+        timestamp: Date.now(),
+        totalValueUsd,
+        holdings: holdings.map((h) => ({
+          mint: h.mint,
+          symbol: h.symbol,
+          valueUsd: h.valueUsd ?? 0,
+        })),
+      })
+    }
+  }, [isLoading, holdings, totalValueUsd, addSnapshot])
 
   const onRefresh = useCallback(async () => {
     if (!isWeb) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
@@ -56,6 +78,7 @@ export default function PortfolioScreen() {
         {(account || DEMO_MODE) ? (
           <View style={{ gap: spacing.xl }}>
             <PortfolioHeader />
+            <PortfolioHistoryChart />
             <AllocationChart />
             <HoldingsList showEmptyState onRetry={onRefresh} onAlertCreated={handleAlertCreated} />
             <AIInsights />
