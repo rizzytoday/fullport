@@ -1,6 +1,10 @@
 import { useRef, useState, useEffect } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import * as Haptics from 'expo-haptics'
+import { Platform } from 'react-native'
+
+const isWeb = Platform.OS === 'web'
 import { usePortfolioStore } from '@/stores/portfolio-store'
 import { useSkrStore } from '@/stores/skr-store'
 import { colors, spacing, typography, borderRadius } from '@/constants/app-styles'
@@ -25,7 +29,11 @@ function formatCompact(value: number): string {
   return `$${value.toFixed(0)}`
 }
 
-export function PortfolioHeader() {
+interface PortfolioHeaderProps {
+  onChartPress?: () => void
+}
+
+export function PortfolioHeader({ onChartPress }: PortfolioHeaderProps) {
   const { totalValueUsd, change24h, walletCount, lastUpdated } = usePortfolioStore()
   const { staking, currentApy, priceUsd } = useSkrStore()
   const hasAnimated = useRef(false)
@@ -101,12 +109,25 @@ export function PortfolioHeader() {
         )}
       </View>
 
-      <SlotCounter
-        value={totalValueUsd}
-        duration={shouldAnimate ? 1200 : 0}
-        style={styles.value}
-        onComplete={() => setShouldAnimate(false)}
-      />
+      <View style={styles.valueRow}>
+        <SlotCounter
+          value={totalValueUsd}
+          duration={shouldAnimate ? 1200 : 0}
+          style={styles.value}
+          onComplete={() => setShouldAnimate(false)}
+        />
+        {onChartPress && (
+          <Pressable
+            style={({ pressed }) => [styles.chartButton, pressed && styles.chartButtonPressed]}
+            onPress={() => {
+              if (!isWeb) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+              onChartPress()
+            }}
+          >
+            <Ionicons name="analytics-outline" size={20} color={colors.textSecondary} />
+          </Pressable>
+        )}
+      </View>
 
       <Animated.View
         entering={FadeInDown.delay(100).duration(400)}
@@ -206,11 +227,30 @@ const styles = StyleSheet.create({
   staleText: {
     color: colors.accentGold,
   },
+  valueRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
   value: {
     fontSize: 40,
     fontWeight: '700',
     color: colors.textPrimary,
     letterSpacing: -1,
+  },
+  chartButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.glassBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+  },
+  chartButtonPressed: {
+    opacity: 0.6,
+    transform: [{ scale: 0.95 }],
   },
   changeRow: {
     flexDirection: 'row',

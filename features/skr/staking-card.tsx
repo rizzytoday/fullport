@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useSkrStore } from '@/stores/skr-store'
+import { useStakingRewardsStore } from '@/stores/staking-rewards-store'
 import { SKR_CONFIG, GUARDIANS } from '@/constants/app-config'
 import { colors, spacing } from '@/constants/app-styles'
 import { CooldownTimer } from '@/features/skr/cooldown-timer'
@@ -17,7 +18,8 @@ interface StakingCardProps {
 }
 
 export function StakingCard({ onStake, onUnstake, onChangeGuardian }: StakingCardProps) {
-  const { uiBalance, staking, currentApy } = useSkrStore()
+  const { uiBalance, staking, currentApy, priceUsd } = useSkrStore()
+  const { totalEarned, totalEarnedUsd } = useStakingRewardsStore()
 
   const handleStake = () => {
     if (!isWeb) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
@@ -72,20 +74,27 @@ export function StakingCard({ onStake, onUnstake, onChangeGuardian }: StakingCar
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>Staked</Text>
           <Text style={styles.statValue}>
-            {staking?.stakedUiAmount?.toFixed(0) ?? '0'}
+            {staking?.stakedUiAmount ? `${(staking.stakedUiAmount / 1000).toFixed(0)}K` : '0'}
           </Text>
+          <Text style={styles.statUnit}>SKR</Text>
         </View>
         <View style={styles.statDivider} />
         <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Rewards</Text>
+          <Text style={styles.statLabel}>Pending</Text>
           <Text style={[styles.statValue, styles.rewardsText]}>
-            +{((staking?.pendingRewards ?? 0) / Math.pow(10, SKR_CONFIG.decimals)).toFixed(2)}
+            +{((staking?.pendingRewards ?? 0) / Math.pow(10, SKR_CONFIG.decimals)).toFixed(0)}
           </Text>
+          <Text style={[styles.statUnit, styles.rewardsText]}>SKR</Text>
         </View>
         <View style={styles.statDivider} />
         <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Interval</Text>
-          <Text style={styles.statValue}>48h</Text>
+          <Text style={styles.statLabel}>Earned</Text>
+          <Text style={[styles.statValue, styles.earnedText]}>
+            ${totalEarnedUsd >= 1000 ? `${(totalEarnedUsd / 1000).toFixed(1)}K` : totalEarnedUsd.toFixed(0)}
+          </Text>
+          <Text style={[styles.statUnit, styles.earnedText]}>
+            {totalEarned >= 1000 ? `${(totalEarned / 1000).toFixed(1)}K` : totalEarned.toFixed(0)} SKR
+          </Text>
         </View>
       </View>
 
@@ -222,8 +231,17 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     letterSpacing: -0.3,
   },
+  statUnit: {
+    fontSize: 10,
+    fontWeight: '500',
+    color: colors.textMuted,
+    marginTop: -2,
+  },
   rewardsText: {
     color: colors.accentGreen,
+  },
+  earnedText: {
+    color: colors.accentPurple,
   },
   actions: {
     flexDirection: 'row',

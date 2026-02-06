@@ -14,7 +14,7 @@ import { usePortfolioStore } from '@/stores/portfolio-store'
 import { usePortfolioHistoryStore } from '@/stores/portfolio-history-store'
 import { DEMO_MODE } from '@/constants/mock-data'
 import { Toast } from '@/components/toast'
-import { useCallback, useState, useEffect } from 'react'
+import { useCallback, useState, useEffect, useRef } from 'react'
 import * as Haptics from 'expo-haptics'
 
 const isWeb = Platform.OS === 'web'
@@ -29,6 +29,7 @@ export default function PortfolioScreen() {
   const [refreshing, setRefreshing] = useState(false)
   const [toastVisible, setToastVisible] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
+  const [showChart, setShowChart] = useState(false)
 
   // Portfolio data for history snapshots
   const { holdings, totalValueUsd } = usePortfolioStore()
@@ -77,8 +78,8 @@ export default function PortfolioScreen() {
       >
         {(account || DEMO_MODE) ? (
           <View style={{ gap: spacing.xl }}>
-            <PortfolioHeader />
-            <PortfolioHistoryChart />
+            <PortfolioHeader onChartPress={() => setShowChart(!showChart)} />
+            {showChart && <PortfolioHistoryChart />}
             <AllocationChart />
             <HoldingsList showEmptyState onRetry={onRefresh} onAlertCreated={handleAlertCreated} />
             <AIInsights />

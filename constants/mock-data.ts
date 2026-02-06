@@ -216,7 +216,7 @@ export const MOCK_STAKING_REWARDS_TOTALS = {
   totalEarnedUsd: MOCK_STAKING_REWARDS.reduce((sum, c) => sum + c.usdValue, 0),
 }
 
-// Portfolio History - 30 days of portfolio value snapshots
+// Portfolio History - 365 days of portfolio value snapshots + hourly for today
 // Shows realistic growth with daily volatility
 function generatePortfolioHistory(): {
   timestamp: number
@@ -232,44 +232,44 @@ function generatePortfolioHistory(): {
   }[] = []
 
   const currentTotal = MOCK_TOTAL_VALUE // ~238K
-  const thirtyDaysAgo = now - 30 * day
+  const oneYearAgo = now - 365 * day
 
-  // Start from a value that would grow to current with ~15% monthly gain
-  // Plus realistic volatility
-  let baseValue = currentTotal * 0.85
+  // Start from a value that grew to current over the year (~80% annual gain)
+  let baseValue = currentTotal * 0.55
 
-  for (let d = 0; d <= 30; d++) {
-    const timestamp = thirtyDaysAgo + d * day
+  // Holdings ratios
+  const holdingRatios = {
+    SOL: 0.517,
+    SKR: 0.102,
+    USDC: 0.189,
+    JUP: 0.086,
+    BONK: 0.076,
+    MELANIA: 0.032
+  }
 
-    // Daily growth rate (~0.5% average to get ~15% over 30 days)
-    const dailyGrowth = 0.005
+  // Generate daily snapshots for 365 days
+  for (let d = 0; d <= 365; d++) {
+    const timestamp = oneYearAgo + d * day
 
-    // Add daily volatility (+/- 3%)
-    const volatility = (Math.random() - 0.5) * 0.06
+    // Daily growth rate (~0.15% average to get ~80% over 365 days)
+    const dailyGrowth = 0.0015
 
-    // Add market trend component (sine wave for realistic patterns)
-    const trendCycle = Math.sin(d / 7 * Math.PI) * 0.02
+    // Add daily volatility (+/- 2%)
+    const volatility = (Math.random() - 0.5) * 0.04
+
+    // Add market trend component (longer cycles for yearly view)
+    const trendCycle = Math.sin(d / 30 * Math.PI) * 0.015
 
     // Calculate day's total value
     const dayFactor = 1 + dailyGrowth + volatility + trendCycle
     baseValue = baseValue * dayFactor
 
-    // Ensure final day matches current total
-    const totalValue = d === 30 ? currentTotal : Math.round(baseValue)
+    // Ensure final day is close to current total
+    const totalValue = d === 365 ? currentTotal : Math.round(baseValue)
 
     // Calculate 24h change
     const prevDayValue = history.length > 0 ? history[history.length - 1].totalValue : baseValue
     const change24h = Math.round(((totalValue - prevDayValue) / prevDayValue) * 10000) / 100
-
-    // Approximate holdings breakdown (proportional to current holdings)
-    const holdingRatios = {
-      SOL: 0.517,    // ~123K of 238K
-      SKR: 0.102,    // ~24K
-      USDC: 0.189,   // ~45K
-      JUP: 0.086,    // ~20K
-      BONK: 0.076,   // ~18K
-      MELANIA: 0.032 // ~7.5K
-    }
 
     const holdings = Object.entries(holdingRatios).map(([symbol, ratio]) => ({
       symbol,
@@ -284,7 +284,31 @@ function generatePortfolioHistory(): {
     })
   }
 
-  return history
+  // Add hourly snapshots for the last 24 hours (for 1D view)
+  const yesterdayValue = history[history.length - 2]?.totalValue ?? currentTotal * 0.98
+  for (let h = 1; h < 24; h++) {
+    const timestamp = now - (24 - h) * hour
+
+    // Small hourly fluctuations (+/- 0.3%)
+    const hourlyChange = (Math.random() - 0.5) * 0.006
+    const progress = h / 24
+    const totalValue = Math.round(yesterdayValue + (currentTotal - yesterdayValue) * progress * (1 + hourlyChange))
+
+    const holdings = Object.entries(holdingRatios).map(([symbol, ratio]) => ({
+      symbol,
+      value: Math.round(totalValue * ratio),
+    }))
+
+    history.push({
+      timestamp,
+      totalValue,
+      change24h: 0, // Not relevant for hourly
+      holdings,
+    })
+  }
+
+  // Sort by timestamp
+  return history.sort((a, b) => a.timestamp - b.timestamp)
 }
 
 export const MOCK_PORTFOLIO_HISTORY = generatePortfolioHistory()
