@@ -7,6 +7,7 @@ import { AllocationChart } from '@/features/portfolio/allocation-chart'
 import { HoldingsList } from '@/features/portfolio/holdings-list'
 import { ConnectWalletCard } from '@/features/portfolio/connect-wallet-card'
 import { usePortfolioData } from '@/features/portfolio/use-portfolio-data'
+import { Toast } from '@/components/toast'
 import { useCallback, useState } from 'react'
 import * as Haptics from 'expo-haptics'
 
@@ -19,6 +20,8 @@ export default function PortfolioScreen() {
 
   const { refetch } = usePortfolioData()
   const [refreshing, setRefreshing] = useState(false)
+  const [toastVisible, setToastVisible] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
 
   const onRefresh = useCallback(async () => {
     if (!isWeb) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
@@ -26,6 +29,12 @@ export default function PortfolioScreen() {
     await refetch()
     setRefreshing(false)
   }, [refetch])
+
+  const handleAlertCreated = useCallback((symbol: string, direction: string, price: string) => {
+    const arrow = direction === 'above' ? '↑' : '↓'
+    setToastMessage(`${symbol} alert ${arrow} $${price}`)
+    setToastVisible(true)
+  }, [])
 
   return (
     <SafeAreaView style={[appStyles.screen, isWeb && { paddingTop: 40 }]} edges={['top']}>
@@ -44,7 +53,7 @@ export default function PortfolioScreen() {
           <View style={{ gap: spacing.xl }}>
             <PortfolioHeader />
             <AllocationChart />
-            <HoldingsList showEmptyState onRetry={onRefresh} />
+            <HoldingsList showEmptyState onRetry={onRefresh} onAlertCreated={handleAlertCreated} />
           </View>
         ) : (
           <View style={{ paddingTop: spacing.xl }}>
@@ -52,6 +61,15 @@ export default function PortfolioScreen() {
           </View>
         )}
       </ScrollView>
+
+      {/* Toast notification */}
+      <Toast
+        visible={toastVisible}
+        message={toastMessage}
+        type="success"
+        duration={2000}
+        onHide={() => setToastVisible(false)}
+      />
     </SafeAreaView>
   )
 }

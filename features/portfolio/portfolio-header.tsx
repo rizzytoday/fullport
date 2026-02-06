@@ -1,3 +1,4 @@
+import { useRef, useState, useEffect } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { usePortfolioStore } from '@/stores/portfolio-store'
@@ -5,6 +6,7 @@ import { useSkrStore } from '@/stores/skr-store'
 import { colors, spacing, typography, borderRadius } from '@/constants/app-styles'
 import { formatRelativeTime, isDataStale } from '@/hooks/use-network-status'
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated'
+import { SlotCounter } from '@/components/slot-counter'
 
 function formatCurrency(value: number): string {
   if (value >= 1_000_000) {
@@ -26,6 +28,16 @@ function formatCompact(value: number): string {
 export function PortfolioHeader() {
   const { totalValueUsd, change24h, walletCount, lastUpdated } = usePortfolioStore()
   const { staking, currentApy, priceUsd } = useSkrStore()
+  const hasAnimated = useRef(false)
+  const [shouldAnimate, setShouldAnimate] = useState(false)
+
+  // Detect when real data arrives and trigger animation
+  useEffect(() => {
+    if (totalValueUsd > 0 && !hasAnimated.current) {
+      hasAnimated.current = true
+      setShouldAnimate(true)
+    }
+  }, [totalValueUsd])
 
   const isPositive = (change24h ?? 0) >= 0
   const changeText = change24h !== null
@@ -89,12 +101,12 @@ export function PortfolioHeader() {
         )}
       </View>
 
-      <Animated.Text
-        entering={FadeInDown.delay(50).duration(400)}
+      <SlotCounter
+        value={totalValueUsd}
+        duration={shouldAnimate ? 1200 : 0}
         style={styles.value}
-      >
-        {formatCurrency(totalValueUsd)}
-      </Animated.Text>
+        onComplete={() => setShouldAnimate(false)}
+      />
 
       <Animated.View
         entering={FadeInDown.delay(100).duration(400)}

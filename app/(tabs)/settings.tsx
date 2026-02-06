@@ -227,7 +227,7 @@ export default function SettingsScreen() {
             <View style={styles.emptyAlerts}>
               <Ionicons name="notifications-outline" size={24} color={colors.textMuted} />
               <Text style={styles.emptyAlertsText}>
-                Tap the bell icon on any token to create a price alert
+                Press and hold any token to create a price alert
               </Text>
             </View>
           ) : (

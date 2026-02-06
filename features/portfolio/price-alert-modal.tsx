@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   View,
   Text,
@@ -17,7 +17,7 @@ import { TokenHolding } from '@/stores/portfolio-store'
 import { usePriceAlertsStore, AlertDirection } from '@/stores/price-alerts-store'
 import { requestNotificationPermission, sendTestNotification } from '@/services/notification-service'
 import * as Haptics from 'expo-haptics'
-import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
 const isWeb = Platform.OS === 'web'
 
@@ -25,9 +25,10 @@ interface PriceAlertModalProps {
   visible: boolean
   onClose: () => void
   token: TokenHolding | null
+  onAlertCreated?: (symbol: string, direction: string, price: string) => void
 }
 
-export function PriceAlertModal({ visible, onClose, token }: PriceAlertModalProps) {
+export function PriceAlertModal({ visible, onClose, token, onAlertCreated }: PriceAlertModalProps) {
   const [direction, setDirection] = useState<AlertDirection>('above')
   const [targetPrice, setTargetPrice] = useState('')
   const [hasPermission, setHasPermission] = useState<boolean | null>(null)
@@ -52,11 +53,11 @@ export function PriceAlertModal({ visible, onClose, token }: PriceAlertModalProp
     }
   }, [visible])
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setTargetPrice('')
     setDirection('above')
     onClose()
-  }
+  }, [onClose])
 
   const handleCreateAlert = async () => {
     if (!token || !targetPrice) return
@@ -87,6 +88,9 @@ export function PriceAlertModal({ visible, onClose, token }: PriceAlertModalProp
     })
 
     if (!isWeb) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+
+    // Call callback and close
+    onAlertCreated?.(token.symbol, direction, targetPrice)
     handleClose()
   }
 
@@ -106,7 +110,7 @@ export function PriceAlertModal({ visible, onClose, token }: PriceAlertModalProp
       onRequestClose={handleClose}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.modalContainer}
       >
         {/* Backdrop */}
@@ -122,8 +126,8 @@ export function PriceAlertModal({ visible, onClose, token }: PriceAlertModalProp
 
         {/* Modal Content */}
         <Animated.View
-          entering={SlideInDown.duration(300).damping(25).stiffness(200)}
-          exiting={SlideOutDown.duration(200)}
+          entering={FadeIn.duration(200)}
+          exiting={FadeOut.duration(150)}
           style={styles.modalContent}
         >
           {/* Handle */}

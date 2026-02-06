@@ -137,7 +137,7 @@ export function LockScreen() {
               size={28}
               color={colors.textPrimary}
             />
-            <Text style={styles.unlockText}>
+            <Text style={styles.unlockText} numberOfLines={1}>
               {isAuthenticating ? 'Authenticating...' : 'Tap to Unlock'}
             </Text>
           </Pressable>
@@ -192,7 +192,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: borderRadius.lg,
     paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.xxl,
+    paddingHorizontal: spacing.xl,
+    minWidth: 220,
+    alignSelf: 'center',
   },
   unlockButtonPressed: {
     opacity: 0.8,

@@ -14,7 +14,7 @@ import {
 import { BlurView } from 'expo-blur'
 import { Ionicons } from '@expo/vector-icons'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
-import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import * as Haptics from 'expo-haptics'
 
 import { colors, spacing, borderRadius, typography } from '@/constants/app-styles'
@@ -195,7 +195,7 @@ export function StakingModal({ visible, mode, onClose, onSuccess }: StakingModal
       onRequestClose={handleClose}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.overlay}
       >
         <Pressable style={styles.backdrop} onPress={handleClose}>
@@ -205,8 +205,8 @@ export function StakingModal({ visible, mode, onClose, onSuccess }: StakingModal
         </Pressable>
 
         <Animated.View
-          entering={SlideInDown.duration(300).damping(25).stiffness(200)}
-          exiting={SlideOutDown.duration(200)}
+          entering={FadeIn.duration(200)}
+          exiting={FadeOut.duration(150)}
           style={styles.container}
         >
           {/* Handle */}

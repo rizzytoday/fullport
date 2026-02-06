@@ -123,6 +123,7 @@ export const MOCK_STAKING_INFO: StakingInfo = {
   lastCompound: Date.now() / 1000 - 86400, // 24 hours ago
   cooldownEnd: null,
   isUnstaking: false,
+  stakingStartedAt: Date.now() - 30 * 24 * 60 * 60 * 1000, // Started 30 days ago
 }
 
 // Demo mode flag - set to true to use mock data for display

@@ -133,9 +133,10 @@ function HoldingItem({ holding, index, onAlertPress, hasAlert }: HoldingItemProp
 interface HoldingsListProps {
   showEmptyState?: boolean
   onRetry?: () => void
+  onAlertCreated?: (symbol: string, direction: string, price: string) => void
 }
 
-export function HoldingsList({ showEmptyState = false, onRetry }: HoldingsListProps) {
+export function HoldingsList({ showEmptyState = false, onRetry, onAlertCreated }: HoldingsListProps) {
   const { holdings, isLoading, error } = usePortfolioStore()
   const { alerts } = usePriceAlertsStore()
   const [showAddModal, setShowAddModal] = useState(false)
@@ -218,6 +219,7 @@ export function HoldingsList({ showEmptyState = false, onRetry }: HoldingsListPr
           setSelectedToken(null)
         }}
         token={selectedToken}
+        onAlertCreated={onAlertCreated}
       />
 
       {/* Holdings */}

@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 import { BlurView } from 'expo-blur'
 import { Ionicons } from '@expo/vector-icons'
-import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown, FadeInRight } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut, FadeInRight } from 'react-native-reanimated'
 import * as Haptics from 'expo-haptics'
 import { Platform } from 'react-native'
 
@@ -116,8 +116,8 @@ export function GuardianSelectModal({ visible, onClose, onSelect }: GuardianSele
         </Pressable>
 
         <Animated.View
-          entering={SlideInDown.duration(300).damping(25).stiffness(200)}
-          exiting={SlideOutDown.duration(200)}
+          entering={FadeIn.duration(200)}
+          exiting={FadeOut.duration(150)}
           style={styles.container}
         >
           {/* Handle */}

@@ -15,7 +15,7 @@ import { colors, spacing, borderRadius } from '@/constants/app-styles'
 import { useWatchedWalletsStore } from '@/stores/watched-wallets-store'
 import { isValidSolanaAddress } from '@/features/portfolio/token-metadata-service'
 import * as Haptics from 'expo-haptics'
-import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
 const isWeb = Platform.OS === 'web'
 
@@ -71,7 +71,7 @@ export function AddWatchedWalletModal({ visible, onClose }: AddWatchedWalletModa
       onRequestClose={handleClose}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.modalContainer}
       >
         {/* Backdrop */}
@@ -87,8 +87,8 @@ export function AddWatchedWalletModal({ visible, onClose }: AddWatchedWalletModa
 
         {/* Modal Content */}
         <Animated.View
-          entering={SlideInDown.duration(300).damping(25).stiffness(200)}
-          exiting={SlideOutDown.duration(200)}
+          entering={FadeIn.duration(200)}
+          exiting={FadeOut.duration(150)}
           style={styles.modalContent}
         >
           {/* Handle */}
@@ -187,7 +187,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: borderRadius.xl,
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.xxl,
-    minHeight: 340,
   },
   handle: {
     width: 36,

@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullport — MONOLITH Pitch Deck</title>
+    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&f[]=satoshi@400,500,600&display=swap">
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES (THEME)
+           Solana Native - Dark with gradient accents
+           =========================================== */
+        :root {
+            --bg: #000000;
+            --surface: #0a0a0a;
+            --border: rgba(255,255,255,0.1);
+            --text: #ffffff;
+            --text-muted: rgba(255,255,255,0.6);
+            --solana-purple: #9945FF;
+            --solana-green: #14F195;
+            --accent-glow: rgba(153, 69, 255, 0.3);
+
+            --font-display: 'Cabinet Grotesk', sans-serif;
+            --font-body: 'Satoshi', sans-serif;
+
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* ===========================================
+           BASE STYLES
+           =========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* ===========================================
+           GRADIENT ORBS (Background atmosphere)
+           =========================================== */
+        .orbs {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.35;
+            animation: float 12s ease-in-out infinite;
+        }
+
+        .orb-purple {
+            width: 500px;
+            height: 500px;
+            background: var(--solana-purple);
+            top: -150px;
+            right: -150px;
+        }
+
+        .orb-green {
+            width: 400px;
+            height: 400px;
+            background: var(--solana-green);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: -6s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, 30px) scale(1.05); }
+        }
+
+        /* ===========================================
+           SLIDE CONTAINER
+           =========================================== */
+        .slide {
+            min-height: 100vh;
+            padding: clamp(2rem, 5vw, 4rem);
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .slide-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ===========================================
+           TYPOGRAPHY
+           =========================================== */
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--solana-green);
+            margin-bottom: 1.5rem;
+        }
+
+        .eyebrow::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--solana-green);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--solana-green);
+        }
+
+        h1, h2 {
+            font-family: var(--font-display);
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.04em;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 10vw, 6.5rem);
+        }
+
+        h2 {
+            font-size: clamp(2.5rem, 7vw, 4.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--solana-purple), var(--solana-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* ===========================================
+           ANIMATIONS
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s var(--ease-out-expo),
+                        transform 0.8s var(--ease-out-expo);
+        }
+
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide.visible .reveal:nth-child(1) { transition-delay: 0.1s; }
+        .slide.visible .reveal:nth-child(2) { transition-delay: 0.2s; }
+        .slide.visible .reveal:nth-child(3) { transition-delay: 0.35s; }
+        .slide.visible .reveal:nth-child(4) { transition-delay: 0.5s; }
+        .slide.visible .reveal:nth-child(5) { transition-delay: 0.65s; }
+
+        /* ===========================================
+           COMPONENTS
+           =========================================== */
+
+        /* Stats Row */
+        .stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--solana-purple), var(--solana-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Feature Cards */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(153, 69, 255, 0.3);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--solana-purple), var(--solana-green));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .feature-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Problem/Solution Cards */
+        .problem-list {
+            margin-top: 2rem;
+        }
+
+        .problem-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.25rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .problem-item:last-child {
+            border-bottom: none;
+        }
+
+        .problem-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 99, 99, 0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff6b6b;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .solution-icon {
+            background: rgba(20, 241, 149, 0.15);
+            color: var(--solana-green);
+        }
+
+        .problem-text {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        .problem-text strong {
+            color: var(--text);
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(153, 69, 255, 0.1), rgba(20, 241, 149, 0.1));
+            border: 1px solid rgba(153, 69, 255, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-top: 2rem;
+        }
+
+        .highlight-box h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        /* Judging Grid */
+        .judging-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .judging-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .judging-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.75rem;
+        }
+
+        .judging-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .judging-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .judging-percent {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--solana-green);
+        }
+
+        .judging-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+        }
+
+        .judging-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--solana-purple), var(--solana-green));
+            border-radius: 2px;
+            width: 0;
+            transition: width 1s var(--ease-out-expo) 0.5s;
+        }
+
+        .slide.visible .judging-fill {
+            width: 100%;
+        }
+
+        .judging-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* CTA / Final */
+        .cta-section {
+            text-align: center;
+            padding-top: 2rem;
+        }
+
+        .cta-title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            margin-bottom: 1rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 100px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--solana-purple), var(--solana-green));
+            color: white;
+            box-shadow: 0 4px 24px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        /* ===========================================
+           NAVIGATION
+           =========================================== */
+        .nav-dots {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: var(--solana-green);
+            box-shadow: 0 0 12px var(--solana-green);
+        }
+
+        .nav-dot:hover {
+            background: var(--solana-purple);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--solana-purple), var(--solana-green));
+            z-index: 100;
+            transition: width 0.3s ease;
+        }
+
+        .keyboard-hint {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .nav-dots, .keyboard-hint {
+                display: none;
+            }
+        }
+
+        /* ===========================================
+           REDUCED MOTION
+           =========================================== */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal {
+                transition: opacity 0.3s ease;
+                transform: none;
+            }
+            .orb {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Orbs -->
+    <div class="orbs">
+        <div class="orb orb-purple"></div>
+        <div class="orb orb-green"></div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" style="width: 0%"></div>
+
+    <!-- Navigation Dots -->
+    <nav class="nav-dots"></nav>
+
+    <!-- Keyboard Hint -->
+    <div class="keyboard-hint">← → or scroll to navigate</div>
+
+    <!-- ===========================================
+         SLIDE 1: TITLE
+         =========================================== -->
+    <section class="slide" data-slide="1">
+        <div class="slide-content">
+            <div class="reveal" style="margin-bottom: 2rem;">
+                <img src="data:image/png;base64,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" alt="Fullport" style="width: 80px; height: 80px; border-radius: 20px; box-shadow: 0 8px 32px rgba(153, 69, 255, 0.4);">
+            </div>
+            <p class="eyebrow reveal">MONOLITH Hackathon 2026</p>
+            <h1 class="reveal">Track. Stake.<br><span class="gradient-text">Dominate.</span></h1>
+            <p class="subtitle reveal" style="margin-top: 1.5rem;">
+                Fullport brings portfolio tracking and native SKR staking together in one powerful mobile experience built for Seeker.
+            </p>
+            <div class="stats reveal">
+                <div class="stat">
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">Unified App</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">∞</div>
+                    <div class="stat-label">Tokens Tracked</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">SKR Staking</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 2: PROBLEM
+         =========================================== -->
+    <section class="slide" data-slide="2">
+        <div class="slide-content">
+            <p class="eyebrow reveal">The Problem</p>
+            <h2 class="reveal">Fragmented <span class="gradient-text">Experience</span></h2>
+            <p class="subtitle reveal">Solana users juggle multiple apps to manage their portfolio and stake SKR.</p>
+
+            <div class="problem-list reveal">
+                <div class="problem-item">
+                    <div class="problem-icon">✕</div>
+                    <p class="problem-text"><strong>Portfolio tracking</strong> in one app, staking in another</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon">✕</div>
+                    <p class="problem-text"><strong>No unified view</strong> of holdings + staking rewards</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon">✕</div>
+                    <p class="problem-text"><strong>Complex DeFi interfaces</strong> intimidate everyday users</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon">✕</div>
+                    <p class="problem-text"><strong>SKR holders</strong> lack a native mobile staking experience</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 3: SOLUTION
+         =========================================== -->
+    <section class="slide" data-slide="3">
+        <div class="slide-content">
+            <p class="eyebrow reveal">The Solution</p>
+            <h2 class="reveal">Meet <span class="gradient-text">Fullport</span></h2>
+            <p class="subtitle reveal">A mobile-first portfolio tracker with native SKR staking — designed for daily use.</p>
+
+            <div class="problem-list reveal">
+                <div class="problem-item">
+                    <div class="problem-icon solution-icon">✓</div>
+                    <p class="problem-text"><strong>All-in-one</strong> — Portfolio + Staking in a single app</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon solution-icon">✓</div>
+                    <p class="problem-text"><strong>Real-time charts</strong> — Animated sparklines on every asset</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon solution-icon">✓</div>
+                    <p class="problem-text"><strong>One-tap staking</strong> — Stake SKR without leaving the app</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon solution-icon">✓</div>
+                    <p class="problem-text"><strong>Seeker-native</strong> — Built from the ground up for the ecosystem</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 4: KEY FEATURES
+         =========================================== -->
+    <section class="slide" data-slide="4">
+        <div class="slide-content">
+            <p class="eyebrow reveal">Features</p>
+            <h2 class="reveal">Built for <span class="gradient-text">Daily Use</span></h2>
+
+            <div class="features-grid reveal">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Live Portfolio</h3>
+                    <p class="feature-desc">Total value, 24h change, allocation chart — updated every minute.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <div class="feature-title">Token Details</div>
+                    <p class="feature-desc">Tap any asset for full charts with 1H, 24H, 7D, 30D time periods.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💎</div>
+                    <div class="feature-title">SKR Staking</div>
+                    <p class="feature-desc">Choose guardians, stake tokens, track rewards — all in-app.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <div class="feature-title">Biometric Lock</div>
+                    <p class="feature-desc">Face ID / fingerprint protection keeps your portfolio secure.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 5: SKR STAKING (DIFFERENTIATOR)
+         =========================================== -->
+    <section class="slide" data-slide="5">
+        <div class="slide-content">
+            <div class="reveal" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <text x="0" y="28" fill="white" font-family="var(--font-display)" font-size="24" font-weight="800" letter-spacing="-0.02em">SEEKER</text>
+                </svg>
+                <span style="color: var(--text-muted); font-size: 1.5rem;">×</span>
+                <span style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--solana-purple), var(--solana-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Fullport</span>
+            </div>
+            <p class="eyebrow reveal">The Differentiator</p>
+            <h2 class="reveal">Native <span class="gradient-text">SKR Staking</span></h2>
+            <p class="subtitle reveal">The only mobile portfolio app with built-in SKR staking.</p>
+
+            <div class="highlight-box reveal">
+                <h3>Why This Matters</h3>
+                <p class="problem-text" style="margin-bottom: 1.5rem;">
+                    SKR is the utility token of the Seeker ecosystem. By integrating staking directly into the portfolio experience, users can:
+                </p>
+                <div class="stats" style="margin-top: 0;">
+                    <div class="stat">
+                        <div class="stat-value">Earn</div>
+                        <div class="stat-label">Passive rewards</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">Track</div>
+                        <div class="stat-label">Projected earnings</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">Manage</div>
+                        <div class="stat-label">All in one place</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 6: JUDGING CRITERIA
+         =========================================== -->
+    <section class="slide" data-slide="6">
+        <div class="slide-content">
+            <p class="eyebrow reveal">Judging Criteria</p>
+            <h2 class="reveal">How We <span class="gradient-text">Score</span></h2>
+
+            <div class="judging-grid reveal">
+                <div class="judging-card">
+                    <div class="judging-header">
+                        <span class="judging-title">Stickiness</span>
+                        <span class="judging-percent">25%</span>
+                    </div>
+                    <div class="judging-bar"><div class="judging-fill"></div></div>
+                    <p class="judging-desc">Daily use case — check portfolio, monitor staking rewards, set price alerts.</p>
+                </div>
+                <div class="judging-card">
+                    <div class="judging-header">
+                        <span class="judging-title">UX Quality</span>
+                        <span class="judging-percent">25%</span>
+                    </div>
+                    <div class="judging-bar"><div class="judging-fill"></div></div>
+                    <p class="judging-desc">Smooth animations, intuitive navigation, glass morphism design.</p>
+                </div>
+                <div class="judging-card">
+                    <div class="judging-header">
+                        <span class="judging-title">Innovation</span>
+                        <span class="judging-percent">25%</span>
+                    </div>
+                    <div class="judging-bar"><div class="judging-fill"></div></div>
+                    <p class="judging-desc">First mobile app with native SKR staking integration.</p>
+                </div>
+                <div class="judging-card">
+                    <div class="judging-header">
+                        <span class="judging-title">Presentation</span>
+                        <span class="judging-percent">25%</span>
+                    </div>
+                    <div class="judging-bar"><div class="judging-fill"></div></div>
+                    <p class="judging-desc">Polished demo video, clear pitch deck, working APK.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 7: CLOSING
+         =========================================== -->
+    <section class="slide" data-slide="7">
+        <div class="slide-content cta-section">
+            <div class="reveal" style="display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <img src="data:image/png;base64,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" alt="Fullport" style="width: 64px; height: 64px; border-radius: 16px; box-shadow: 0 8px 32px rgba(153, 69, 255, 0.4);">
+            </div>
+            <p class="eyebrow reveal">Built for Seeker</p>
+            <h1 class="cta-title reveal"><span class="gradient-text">Fullport</span></h1>
+            <p class="subtitle reveal" style="margin: 0 auto;">
+                Your Solana portfolio. SKR staking. One app.
+            </p>
+            <div class="cta-buttons reveal">
+                <a href="#" class="btn btn-primary">Download APK</a>
+                <a href="#" class="btn btn-secondary">View Demo</a>
+            </div>
+            <!-- Seeker Phone Mockup -->
+            <div class="reveal" style="margin-top: 3rem; position: relative;">
+                <div style="display: flex; justify-content: center; align-items: flex-end; gap: 1.5rem;">
+                    <div style="width: 160px; height: 320px; background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%); border-radius: 24px; border: 2px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1); display: flex; flex-direction: column; align-items: center; padding: 8px; position: relative; overflow: hidden;">
+                        <div style="width: 40px; height: 6px; background: #000; border-radius: 3px; margin-bottom: 8px;"></div>
+                        <div style="flex: 1; width: 100%; background: linear-gradient(180deg, #0a0a0a 0%, #141414 100%); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+                            <img src="data:image/png;base64,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" alt="Fullport" style="width: 40px; height: 40px; border-radius: 10px;">
+                            <span style="font-family: var(--font-display); font-size: 10px; font-weight: 700; color: white;">Fullport</span>
+                        </div>
+                    </div>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1.5rem;">Native experience for Solana Seeker</p>
+            </div>
+            <div class="stats reveal" style="justify-content: center; margin-top: 2rem;">
+                <div class="stat" style="text-align: center;">
+                    <div class="stat-label" style="margin-top: 0;">MONOLITH Hackathon 2026</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        /* ===========================================
+           SLIDE PRESENTATION CONTROLLER
+           Handles navigation, animations, progress
+           =========================================== */
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.progressBar = document.querySelector('.progress-bar');
+                this.navDots = document.querySelector('.nav-dots');
+                this.currentSlide = 0;
+                this.isScrolling = false;
+
+                this.init();
+            }
+
+            init() {
+                this.createNavDots();
+                this.setupIntersectionObserver();
+                this.setupKeyboardNav();
+                this.setupScrollNav();
+                this.updateProgress();
+            }
+
+            createNavDots() {
+                this.slides.forEach((_, index) => {
+                    const dot = document.createElement('div');
+                    dot.className = 'nav-dot' + (index === 0 ? ' active' : '');
+                    dot.addEventListener('click', () => this.goToSlide(index));
+                    this.navDots.appendChild(dot);
+                });
+            }
+
+            setupIntersectionObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            const slideIndex = Array.from(this.slides).indexOf(entry.target);
+                            this.currentSlide = slideIndex;
+                            this.updateNavDots();
+                            this.updateProgress();
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                this.slides.forEach(slide => observer.observe(slide));
+            }
+
+            setupKeyboardNav() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+                        e.preventDefault();
+                        this.nextSlide();
+                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        this.prevSlide();
+                    }
+                });
+            }
+
+            setupScrollNav() {
+                let lastScrollTime = 0;
+                const scrollThrottle = 1000;
+
+                document.addEventListener('wheel', (e) => {
+                    const now = Date.now();
+                    if (now - lastScrollTime < scrollThrottle) return;
+
+                    if (e.deltaY > 50) {
+                        this.nextSlide();
+                        lastScrollTime = now;
+                    } else if (e.deltaY < -50) {
+                        this.prevSlide();
+                        lastScrollTime = now;
+                    }
+                }, { passive: true });
+            }
+
+            goToSlide(index) {
+                if (index >= 0 && index < this.slides.length) {
+                    this.slides[index].scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            nextSlide() {
+                if (this.currentSlide < this.slides.length - 1) {
+                    this.goToSlide(this.currentSlide + 1);
+                }
+            }
+
+            prevSlide() {
+                if (this.currentSlide > 0) {
+                    this.goToSlide(this.currentSlide - 1);
+                }
+            }
+
+            updateNavDots() {
+                const dots = this.navDots.querySelectorAll('.nav-dot');
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === this.currentSlide);
+                });
+            }
+
+            updateProgress() {
+                const progress = ((this.currentSlide + 1) / this.slides.length) * 100;
+                this.progressBar.style.width = `${progress}%`;
+            }
+        }
+
+        // Initialize
+        new SlidePresentation();
+    </script>
+</body>
+</html>

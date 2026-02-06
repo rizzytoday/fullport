@@ -111,6 +111,7 @@ async function fetchStakingInfo(walletAddress: string): Promise<StakingInfo | nu
         lastCompound: null,
         cooldownEnd: null,
         isUnstaking: false,
+        stakingStartedAt: null,
       }
     }
 

@@ -17,7 +17,7 @@ import { colors, spacing, borderRadius } from '@/constants/app-styles'
 import { useCustomTokensStore } from '@/stores/custom-tokens-store'
 import { fetchTokenMetadata, TokenMetadata, isValidSolanaAddress } from './token-metadata-service'
 import * as Haptics from 'expo-haptics'
-import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
 const isWeb = Platform.OS === 'web'
 
@@ -145,8 +145,7 @@ export function AddTokenModal({ visible, onClose }: AddTokenModalProps) {
 
       <Pressable
         style={({ pressed }) => [
-          styles.button,
-          styles.primaryButton,
+          styles.singleButton,
           (!mintAddress.trim() || isLoading) && styles.buttonDisabled,
           pressed && styles.buttonPressed,
         ]}
@@ -154,7 +153,7 @@ export function AddTokenModal({ visible, onClose }: AddTokenModalProps) {
         disabled={!mintAddress.trim() || isLoading}
       >
         {isLoading ? (
-          <ActivityIndicator size="small" color={colors.bgPrimary} />
+          <ActivityIndicator size="small" color="#000000" />
         ) : (
           <Text style={styles.primaryButtonText}>Look Up</Text>
         )}
@@ -286,7 +285,7 @@ export function AddTokenModal({ visible, onClose }: AddTokenModalProps) {
       onRequestClose={handleClose}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.modalContainer}
       >
         {/* Backdrop */}
@@ -302,8 +301,8 @@ export function AddTokenModal({ visible, onClose }: AddTokenModalProps) {
 
         {/* Modal Content */}
         <Animated.View
-          entering={SlideInDown.duration(300).damping(25).stiffness(200)}
-          exiting={SlideOutDown.duration(200)}
+          entering={FadeIn.duration(200)}
+          exiting={FadeOut.duration(150)}
           style={styles.modalContent}
         >
           {/* Handle */}
@@ -338,7 +337,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: borderRadius.xl,
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.xxl,
-    minHeight: 320,
   },
   handle: {
     width: 36,
@@ -417,10 +415,18 @@ const styles = StyleSheet.create({
   primaryButton: {
     backgroundColor: colors.textPrimary,
   },
+  singleButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.textPrimary,
+  },
   primaryButtonText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.bgPrimary,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#000000',
+    textAlign: 'center',
   },
   secondaryButton: {
     backgroundColor: colors.glassBg,
