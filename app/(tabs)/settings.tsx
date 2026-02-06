@@ -362,7 +362,7 @@ export default function SettingsScreen() {
           <View style={styles.rowSeparator} />
           <SettingRow
             label="GitHub"
-            onPress={() => Linking.openURL('https://github.com/fullport')}
+            onPress={() => Linking.openURL('https://github.com/rizzytoday/fullport')}
           />
           <View style={styles.rowSeparator} />
           <SettingRow

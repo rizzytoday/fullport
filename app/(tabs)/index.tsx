@@ -8,6 +8,8 @@ import { HoldingsList } from '@/features/portfolio/holdings-list'
 import { AIInsights } from '@/features/portfolio/ai-insights'
 import { ConnectWalletCard } from '@/features/portfolio/connect-wallet-card'
 import { usePortfolioData } from '@/features/portfolio/use-portfolio-data'
+import { useSkrData } from '@/features/skr/use-skr-data'
+import { DEMO_MODE } from '@/constants/mock-data'
 import { Toast } from '@/components/toast'
 import { useCallback, useState } from 'react'
 import * as Haptics from 'expo-haptics'
@@ -20,6 +22,7 @@ export default function PortfolioScreen() {
   const account = wallet?.account
 
   const { refetch } = usePortfolioData()
+  useSkrData() // Load SKR data for AI Insights
   const [refreshing, setRefreshing] = useState(false)
   const [toastVisible, setToastVisible] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
@@ -50,7 +53,7 @@ export default function PortfolioScreen() {
           />
         }
       >
-        {account ? (
+        {(account || DEMO_MODE) ? (
           <View style={{ gap: spacing.xl }}>
             <PortfolioHeader />
             <AllocationChart />

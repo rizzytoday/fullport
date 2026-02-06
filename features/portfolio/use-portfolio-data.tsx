@@ -218,6 +218,16 @@ export function usePortfolioData() {
   }, [holdings, alerts, markTriggered])
 
   const fetchPortfolio = useCallback(async () => {
+    // In demo mode, load mock data even without wallet
+    if (DEMO_MODE && !account?.address) {
+      setLoading(true)
+      const merged = mergeHoldings(MOCK_HOLDINGS, customTokens)
+      setWalletCount(1)
+      setHoldings(merged)
+      setLoading(false)
+      return merged
+    }
+
     if (!account?.address) return []
 
     setLoading(true)
@@ -271,7 +281,7 @@ export function usePortfolioData() {
   const { refetch } = useQuery({
     queryKey: ['portfolio', account?.address, watchedAddresses, aggregateMode],
     queryFn: fetchPortfolio,
-    enabled: !!account?.address,
+    enabled: !!account?.address || DEMO_MODE,
     staleTime: 30000, // 30 seconds
     gcTime: 300000, // 5 minutes
     refetchInterval: 60000, // Auto-refresh every minute

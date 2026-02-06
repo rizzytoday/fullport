@@ -93,17 +93,17 @@ export const MOCK_HOLDINGS: TokenHolding[] = [
     priceHistory: generatePriceHistory(0.0000012, 8.7),
   },
   {
-    mint: 'hntyVP6YFm1Hg25TN9WGLqM12b8TQmcknKrdu1oxWux',
-    symbol: 'HNT',
-    name: 'Helium',
-    amount: 1200_00000000, // 1,200 HNT
-    decimals: 8,
-    uiAmount: 1200,
-    priceUsd: 6.25,
+    mint: 'FUAfBo2jgks6gB4Z4LfZkqSZgzNucisEHqnNebaRxM1P',
+    symbol: 'MELANIA',
+    name: 'Melania Meme',
+    amount: 50000_000_000, // 50,000 MELANIA
+    decimals: 6,
+    uiAmount: 50000,
+    priceUsd: 0.15,
     valueUsd: 7500,
-    change24h: 1.8,
-    logoUri: 'https://shdw-drive.genesysgo.net/6tcnBSybPG7piEDShBcrVtYJDPSvGrDbVvXmXKpzBvWP/hnt.png',
-    priceHistory: generatePriceHistory(6.25, 1.8),
+    change24h: 42.0,
+    logoUri: 'https://coin-images.coingecko.com/coins/images/53775/small/melania-meme.png',
+    priceHistory: generatePriceHistory(0.15, 42.0),
   },
 ]
 
@@ -229,7 +229,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
     timestamp: now - 4 * day,
     status: 'confirmed',
     fromToken: { symbol: 'SOL', amount: 200, logoUri: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png' },
-    toToken: { symbol: 'HNT', amount: 1200, logoUri: 'https://shdw-drive.genesysgo.net/6tcnBSybPG7piEDShBcrVtYJDPSvGrDbVvXmXKpzBvWP/hnt.png' },
+    toToken: { symbol: 'MELANIA', amount: 50000, logoUri: 'https://coin-images.coingecko.com/coins/images/53775/small/melania-meme.png' },
     valueUsd: 19700,
   },
   {

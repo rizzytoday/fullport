@@ -136,6 +136,17 @@ export function useSkrData() {
   } = useSkrStore()
 
   const fetchSkrData = useCallback(async () => {
+    // In demo mode, load mock data even without wallet
+    if (DEMO_MODE && !account?.address) {
+      setLoading(true)
+      const mockBalance = MOCK_SKR_BALANCE * Math.pow(10, SKR_CONFIG.decimals)
+      setBalance(mockBalance, SKR_CONFIG.decimals)
+      setPrice(MOCK_SKR_PRICE)
+      setStaking(MOCK_STAKING_INFO)
+      setLoading(false)
+      return { balance: mockBalance, price: MOCK_SKR_PRICE, stakingInfo: MOCK_STAKING_INFO }
+    }
+
     if (!account?.address) return null
 
     setLoading(true)
@@ -177,7 +188,7 @@ export function useSkrData() {
   const { refetch } = useQuery({
     queryKey: ['skr', account?.address],
     queryFn: fetchSkrData,
-    enabled: !!account?.address,
+    enabled: !!account?.address || DEMO_MODE,
     staleTime: 30000, // 30 seconds
     gcTime: 300000, // 5 minutes
     refetchInterval: 60000, // Auto-refresh every minute
