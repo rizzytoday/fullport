@@ -50,3 +50,16 @@ app-example
 
 # Internal strategy docs
 FOUNDER_INSIGHTS.md
+HACKATHON_RESEARCH.md
+SESSION_RECAP_*.md
+DEMO_VIDEO_SCRIPT.md
+
+# Local submission folder (APK too large, use GitHub Releases)
+monolith-submission/
+
+# IDE
+.idea/
+
+# Pitch deck (lives in monolith-submission/)
+pitch-deck.html
+pitchdeck.html
