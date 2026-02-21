@@ -110,6 +110,17 @@ export function AllocationChart() {
   const { holdings, totalValueUsd } = usePortfolioStore()
   const { staking, priceUsd, uiBalance } = useSkrStore()
 
+  // Must be before any early returns to satisfy Rules of Hooks
+  const animationProgress = useSharedValue(0)
+
+  useEffect(() => {
+    animationProgress.value = 0
+    animationProgress.value = withTiming(1, {
+      duration: 500,
+      easing: Easing.out(Easing.cubic),
+    })
+  }, [viewMode])
+
   const handleViewChange = (mode: ViewMode) => {
     if (mode !== viewMode) {
       if (!isWeb) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
@@ -249,18 +260,6 @@ export function AllocationChart() {
     currentOffset += segment.percentage
     return { ...segment, dashArray, rotation }
   })
-
-  // Animation for chart drawing
-  const animationProgress = useSharedValue(0)
-
-  useEffect(() => {
-    // Reset and animate when view changes
-    animationProgress.value = 0
-    animationProgress.value = withTiming(1, {
-      duration: 500,
-      easing: Easing.out(Easing.cubic),
-    })
-  }, [viewMode])
 
   return (
     <Animated.View entering={FadeIn.duration(400)} style={styles.container}>

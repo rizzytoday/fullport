@@ -237,6 +237,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.textPrimary,
     letterSpacing: -1,
+    flexShrink: 1,
   },
   chartButton: {
     width: 36,

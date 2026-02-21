@@ -100,16 +100,13 @@ export const usePortfolioHistoryStore = create<PortfolioHistoryState>()(
       initializeWithMockData: () => {
         if (!DEMO_MODE) return
 
-        const { snapshots } = get()
-        // Only initialize if store is empty
-        if (snapshots.length > 0) return
-
-        // Transform mock data to PortfolioSnapshot format
+        // In demo mode, always reinitialize so timestamps stay relative to current time.
+        // Stale persisted data (from a previous install) would break 1D/1W filters.
         const mockSnapshots: PortfolioSnapshot[] = MOCK_PORTFOLIO_HISTORY.map((h) => ({
           timestamp: h.timestamp,
           totalValueUsd: h.totalValue,
           holdings: h.holdings.map((holding) => ({
-            mint: '', // Mock data doesn't have mint addresses
+            mint: '',
             symbol: holding.symbol,
             valueUsd: holding.value,
           })),
@@ -122,8 +119,7 @@ export const usePortfolioHistoryStore = create<PortfolioHistoryState>()(
       name: 'fullport-portfolio-history',
       storage: createJSONStorage(() => AsyncStorage),
       onRehydrateStorage: () => (state) => {
-        // After rehydration, initialize with mock data if empty and in demo mode
-        if (state && DEMO_MODE && state.snapshots.length === 0) {
+        if (state && DEMO_MODE) {
           state.initializeWithMockData()
         }
       },
